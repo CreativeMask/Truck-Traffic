@@ -499,7 +499,7 @@ function spawnCoin() {
       log = createSprite(1540, 0, 20, 20);
       log.addImage("log", logI);
       log.setCollider("rectangle", 0, 0, 50, 400);
-      log.debug = true;
+      log.debug = false;
       log.depth = truck.depth-1;
   
       if (diffuculty === "normal") {
