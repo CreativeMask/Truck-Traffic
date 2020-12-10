@@ -257,6 +257,7 @@ function draw() {
     timer = timer+0.25;
     timer2 = timer2+0.25;
     truck.debug = false;
+    log.debug = false;
     
 
     
