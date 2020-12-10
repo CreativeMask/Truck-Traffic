@@ -257,7 +257,6 @@ function draw() {
     timer = timer+0.25;
     timer2 = timer2+0.25;
     truck.debug = false;
-    log.debug = false;
     
 
     
@@ -358,6 +357,7 @@ function draw() {
     if(truck.isTouching(logGroup)){
       life = life+-1;
       logGroup.destroyEach();
+      logGroup.debug = false;
     }
 
     if(truck.isTouching(coinGroup)){
