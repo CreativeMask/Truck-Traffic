@@ -33,6 +33,8 @@ var heart1, heartI;
 var heart2;
 var heart3;
 var life = 0;
+var coin, coinI, coinGroup;
+var log, logI, logGroup;
 
 
 function preload() {
@@ -54,6 +56,8 @@ function preload() {
   hardBI = loadImage("Hard diffucutly.png");
   mainMenuI = loadImage("MainMenu.png");
   heartI = loadImage("heart.png");
+  coinI = loadImage("coin.png");
+  logI = loadImage("Log.png");
 }
 
 function setup() {
@@ -99,6 +103,8 @@ function setup() {
   truck = createSprite(196, 360, 400, 400);
   truck.addImage("tru", truckI);
   truck.scale = 0.75;
+  truck.setCollider("rectangle", 0, 0, 450,150);
+  truck.debug = false;
 
   next = createSprite(768, 530, 20, 20);
   next.addImage("nex", nextI);
@@ -128,8 +134,8 @@ function setup() {
 
   boxGroup = createGroup();
   trafficGroup = createGroup();
-
-  
+  coinGroup = createGroup();
+  logGroup = createGroup();
 
 
 
@@ -234,8 +240,10 @@ function draw() {
 
 
   if (gameState === PLAY) {
-    spawnTraffic()
-    spawnBoxes()
+    spawnTraffic();
+    spawnBoxes();
+    spawnCoin();
+    spawnLog();
     mainMenu.visible = false;
     truck.visible = true;
     title.visible = false;
@@ -248,6 +256,9 @@ function draw() {
     truck.y = 319;
     timer = timer+0.25;
     timer2 = timer2+0.25;
+    truck.debug = false;
+    
+
     
     
     if(life === 3){
@@ -280,11 +291,11 @@ function draw() {
 
     //to make background infinite
     if (diffuculty === "normal") {
-      road.velocityX = (-15 + (score / 5));
+      road.velocityX = (-20 - (3*score / 5));
     } else if (diffuculty === "easy") {
-      road.velocityX = (-8 + (score / 10));
+      road.velocityX = (-8 - (3*score / 10));
     } else if (diffuculty === "hard") {
-      road.velocityX = (-20 + (score / 2));
+      road.velocityX = (-25 - (3*score / 2));
     }
 
 
@@ -342,6 +353,17 @@ function draw() {
       trafficGroup.destroyEach();
     }
 
+    
+    if(truck.isTouching(logGroup)){
+      life = life+-1;
+      logGroup.destroyEach();
+    }
+
+    if(truck.isTouching(coinGroup)){
+      score = score+3;
+      coinGroup.destroyEach();
+    }
+
     if (truck.isTouching(trafficGroup)) {
       life = life+-1;
       trafficGroup.destroyEach();
@@ -358,7 +380,7 @@ function draw() {
     fill("black");
     textSize(50);
     text("Game Over", 60, 200);
-    truck.velocityX = 6;
+    truck.velocityX = (-12 -(3*score/2));
     restart.visible = true;
     restart.depth = -5;
     if (mousePressedOver(restart)) {
@@ -396,11 +418,11 @@ function spawnTraffic() {
     }
 
     if (diffuculty === "normal") {
-      traffic.velocityX = (-15 + (score / 5));
+      traffic.velocityX = (-20 - (3*score / 5));
     } else if (diffuculty === "easy") {
-      traffic.velocityX = (-8 + (score / 10));
+      traffic.velocityX = (-8 - (3*score / 8));
     } else if (diffuculty === "hard") {
-      traffic.velocityX = (-20 + (score / 3));
+      traffic.velocityX = (-25 - (3*score / 3));
     }
 
 
@@ -414,15 +436,15 @@ function spawnTraffic() {
 function spawnBoxes() {
   if (frameCount % 140 === 0) {
     var fl = Math.round(random(1, 3));
-    boxp = createSprite(1400, 0, 20, 20);
+    boxp = createSprite(1540, 0, 20, 20);
     boxp.addImage("box", boxI);
 
     if (diffuculty === "normal") {
-      boxp.velocityX = (-15 + (score / 5));
+      boxp.velocityX = (-20 - (3*score / 5));
     } else if (diffuculty === "easy") {
-      boxp.velocityX = (-8 + (score / 8));
+      boxp.velocityX = (-8 - (3*score / 8));
     } else if (diffuculty === "hard") {
-      boxp.velocityX = (-20 + (score / 3));
+      boxp.velocityX = (-25 - (3*score / 3));
     }
 
     boxp.lifetime = 600;
@@ -438,9 +460,64 @@ function spawnBoxes() {
       boxp.y = 650;
     }
   }
-
-
-
-
-
 }
+
+function spawnCoin() {
+    if (frameCount % 90 === 0 && score > 8) {
+      var vl = Math.round(random(1, 3));
+      coin = createSprite(1540, 0, 20, 20);
+      coin.addImage("coi", coinI);
+      coin.scale = 0.25;
+      coin.setCollider("rectangle", 0, 0, 200, 200);
+      coin.depth = truck.depth-1;
+  
+      if (diffuculty === "normal") {
+        coin.velocityX = (-20 - (3*score / 5));
+      } else if (diffuculty === "easy") {
+        coin.velocityX = (-8 - (3*score / 8));
+      } else if (diffuculty === "hard") {
+        coin.velocityX = (-25 - (3*score / 3));
+      }
+  
+      coin.lifetime = 100;
+      
+  
+      coinGroup.add(coin);
+      if (vl === 1) {
+        coin.y = 80;
+      } else if (vl === 2) {
+        coin.y = 360;
+      } else if (vl === 3) {
+        coin.y = 650;
+      }
+    }
+  }
+
+  function spawnLog(){
+    if (frameCount % 140 === 0 && score > 12) {
+      var rl = Math.round(random(1, 2));
+      log = createSprite(1540, 0, 20, 20);
+      log.addImage("log", logI);
+      log.setCollider("rectangle", 0, 0, 50, 400);
+      log.debug = true;
+      log.depth = truck.depth-1;
+  
+      if (diffuculty === "normal") {
+        log.velocityX = (-20 - (3*score / 5));
+      } else if (diffuculty === "easy") {
+        log.velocityX = (-8 - (3*score / 8));
+      } else if (diffuculty === "hard") {
+        log.velocityX = (-25 - (3*score / 3));
+      }
+  
+      log.lifetime = 100;
+      
+  
+      logGroup.add(log);
+      if (rl === 1) {
+        log.y = 70;
+      } else if (rl === 3) {
+        log.y = 650;
+      }
+    }
+  }
