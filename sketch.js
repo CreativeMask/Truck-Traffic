@@ -373,7 +373,7 @@ function draw() {
     }
 
     if(truck.isTouching(coinGroup)){
-      score = score+3;
+      score = score+2;
       coinGroup.destroyEach();
     }
 
