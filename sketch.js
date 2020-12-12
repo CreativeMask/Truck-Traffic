@@ -354,7 +354,7 @@ function draw() {
     }
 
     if(boxGroup.isTouching(logGroup)){
-      logGroup.destroyEach();
+      boxGroup.destroyEach();
     }
 
     if(coinGroup.isTouching(logGroup)){
@@ -394,6 +394,7 @@ function draw() {
     textSize(50);
     text("Game Over", 60, 200);
     truck.velocityX = (-12 -(3*score/2));
+    road.velocityX = (-12 -(3*score/2));
     restart.visible = true;
     restart.depth = -5;
     if (mousePressedOver(restart)) {
@@ -507,8 +508,8 @@ function spawnCoin() {
   }
 
   function spawnLog(){
-    if (frameCount % 140 === 0 && score > 12) {
-      var rl = Math.round(random(1, 2));
+    if (frameCount % 110 === 0 && score > 12) {
+      var rl = Math.round(random(1, 4));
       log = createSprite(1540, 0, 20, 20);
       log.addImage("log", logI);
       log.setCollider("rectangle", 0, 0, 50, 400);
@@ -527,9 +528,13 @@ function spawnCoin() {
   
       logGroup.add(log);
       if (rl === 1) {
-        log.y = 70;
+        log.y = 200;
+      } else if (rl === 2) {
+        log.y = 560;
       } else if (rl === 3) {
-        log.y = 650;
+        log.y = 200;
+      } else if (rl === 4) {
+        log.y = 560;
       }
     }
   }
