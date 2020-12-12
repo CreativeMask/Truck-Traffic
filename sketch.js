@@ -353,6 +353,18 @@ function draw() {
       trafficGroup.destroyEach();
     }
 
+    if(boxGroup.isTouching(logGroup)){
+      logGroup.destroyEach();
+    }
+
+    if(coinGroup.isTouching(logGroup)){
+      coinGroup.destroyEach();
+    }
+
+    if (coinGroup.isTouching(trafficGroup)) {
+      coinGroup.destroyEach();
+    }
+
     
     if(truck.isTouching(logGroup)){
       life = life+-1;
@@ -500,7 +512,6 @@ function spawnCoin() {
       log = createSprite(1540, 0, 20, 20);
       log.addImage("log", logI);
       log.setCollider("rectangle", 0, 0, 50, 400);
-      log.debug = false;
       log.depth = truck.depth-1;
   
       if (diffuculty === "normal") {
