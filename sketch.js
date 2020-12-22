@@ -1,8 +1,13 @@
+// I after a variable name means it is a image variable
+// T after a variable name means it is a tutorial variable
+// B after a variable name means it is a background variable
+
 var TUTORIAL = 0.5;
 var PAUSE = 0.2;
 var TITLE = -1;
 var PLAY = 1;
 var END = 0;
+var LEARN = 2;
 var gameState = TITLE;
 var road, roadI;
 var boxp, boxI, boxGroup;
@@ -35,6 +40,14 @@ var heart3;
 var life = 0;
 var coin, coinI, coinGroup;
 var log, logI, logGroup;
+var rock, rockI, rockGroup;
+var test = 0;
+var add = 0;
+var logT = 0;
+var coinT = 0;
+var rockT = 0;
+var learnBI1, learnBI2, learnBI3;
+var learnB, learnB2, learnB3;
 
 
 function preload() {
@@ -58,6 +71,10 @@ function preload() {
   heartI = loadImage("heart.png");
   coinI = loadImage("coin.png");
   logI = loadImage("Log.png");
+  rockI = loadImage("rock.png");
+  learnBI1 = loadImage("coinT.png");
+  learnBI2 = loadImage("logT.png");
+  learnBI3 = loadImage("rockT.png");
 }
 
 function setup() {
@@ -132,10 +149,22 @@ function setup() {
   heart3.addImage("hear", heartI);
   heart3.scale = 0.75;
 
+  learnB = createSprite(768, 360,400,400);
+  learnB.addImage("coinT", learnBI1);
+
+  learnB2 = createSprite(768, 360,400,400);
+  learnB2.addImage("logT", learnBI2);
+
+  learnB3 = createSprite(768, 360,400,400);
+  learnB3.addImage("rockT", learnBI3);
+
+
+
   boxGroup = createGroup();
   trafficGroup = createGroup();
   coinGroup = createGroup();
   logGroup = createGroup();
+  rockGroup = createGroup();
 
 
 
@@ -154,6 +183,11 @@ function draw() {
     if (timer < 10) {
       timer = timer + 0.25
     }
+    learnB.visible = false;
+    learnB2.visible = false;
+    learnB3.visible = false;
+    test = 0;
+    add = 0;
     
     heart1.visible = false;
     heart2.visible = false;
@@ -228,6 +262,11 @@ function draw() {
     heart2.visible = false;
     heart3.visible = false;
     mainMenu.depth = 100;
+    boxGroup.destroyEach();
+    coinGroup.destroyEach();
+    trafficGroup.destroyEach();
+    logGroup.destroyEach();
+    rockGroup.destroyEach();
     if (keyDown("space")) {
       gameState = PLAY;
     }
@@ -239,11 +278,52 @@ function draw() {
   }
 
 
+  if(gameState === LEARN){
+    
+    road.velocityY = 0;
+    pauseScreen.visible = false;
+    pause.visible = false;
+    truck.visible = false;
+    mainMenu.visible = false;
+    heart1.visible = false;
+    heart2.visible = false;
+    heart3.visible = false;
+    mainMenu.depth = 100;
+    boxGroup.destroyEach();
+    coinGroup.destroyEach();
+    trafficGroup.destroyEach();
+    logGroup.destroyEach();
+    rockGroup.destroyEach();
+    
+    
+
+    if(keyDown("space")){
+      gameState = PLAY;
+
+      if(score === 6){
+        coinT = 1;
+        score = 7;
+      }
+
+      if(score > 10 && score < 17){
+        logT = 1;
+        score = 11;
+      }
+
+      if(score > 16){
+        rockT = 1;
+        score = 17;
+      }
+
+    }
+  }
+
   if (gameState === PLAY) {
     spawnTraffic();
     spawnBoxes();
     spawnCoin();
     spawnLog();
+    spawnRock();
     mainMenu.visible = false;
     truck.visible = true;
     title.visible = false;
@@ -258,6 +338,32 @@ function draw() {
     timer2 = timer2+0.25;
     truck.debug = false;
     
+
+    if(score === 6 && coinT === 0){
+      gameState = LEARN;
+      learnB.visible = true;
+      learnB2.visible = false;
+      learnB3.visible = false;
+    } else if(score > 10 && logT === 0){
+      gameState = LEARN;
+      learnB.visible = false;
+      learnB2.visible = true;
+      learnB3.visible = false;
+    } else if(score > 16 && rockT === 0){
+      gameState = LEARN;
+      learnB.visible = false;
+      learnB2.visible = false;
+      learnB3.visible = true;
+    } else{
+      learnB.visible = false;
+      learnB2.visible = false;
+      learnB3.visible = false;
+    }
+
+      
+    
+
+
 
     
     
@@ -343,12 +449,8 @@ function draw() {
     }
 
 
-    if (truck.isTouching(boxGroup)) {
-      score = score + 1;
-      boxGroup.destroyEach();
-
-    }
-
+    
+    // to prevent collision between different collectibles/obstaacles
     if (boxGroup.isTouching(trafficGroup)) {
       trafficGroup.destroyEach();
     }
@@ -365,11 +467,44 @@ function draw() {
       coinGroup.destroyEach();
     }
 
+    if(rockGroup.isTouching(logGroup)){
+      logGroup.destroyEach();
+    }
+
+    if(boxGroup.isTouching(coinGroup)){
+      coinGroup.destroyEach();
+    }
+
     
+    if(rockGroup.isTouching(boxGroup)){
+      rockGroup.destroyEach();
+    }
+
+    if(rockGroup.isTouching(coinGroup)){
+      coinGroup.destroyEach();
+    }
+
+    if(rockGroup.isTouching(trafficGroup)){
+      rockGroup.destroyEach();
+    }
+
+   // truck touching obstacles/collectibles 
     if(truck.isTouching(logGroup)){
       life = life+-1;
       logGroup.destroyEach();
       logGroup.debug = false;
+    }
+
+    if (truck.isTouching(boxGroup)) {
+      score = score + 1;
+      boxGroup.destroyEach();
+
+    }
+
+    if(truck.isTouching(rockGroup)){
+      life = life-1;
+      rockGroup.destroyEach();
+      score = score-2;
     }
 
     if(truck.isTouching(coinGroup)){
@@ -383,7 +518,12 @@ function draw() {
       aKey.visible = false;
       dKey.visible = false;
     }
-    
+
+    if(keyDown("t") && add === 0){
+      score = score+1;
+    }
+
+   
   }
   
 
@@ -477,7 +617,7 @@ function spawnBoxes() {
 }
 
 function spawnCoin() {
-    if (frameCount % 90 === 0 && score > 8) {
+    if (frameCount % 90 === 0 && score > 6) {
       var vl = Math.round(random(1, 3));
       coin = createSprite(1540, 0, 20, 20);
       coin.addImage("coi", coinI);
@@ -508,7 +648,7 @@ function spawnCoin() {
   }
 
   function spawnLog(){
-    if (frameCount % 110 === 0 && score > 12) {
+    if (frameCount % 110 === 0 && score > 10) {
       var rl = Math.round(random(1, 4));
       log = createSprite(1540, 0, 20, 20);
       log.addImage("log", logI);
@@ -537,4 +677,42 @@ function spawnCoin() {
         log.y = 560;
       }
     }
+  }
+
+  function spawnRock(){
+    if (frameCount % 150 === 0 && score > 16) {
+      var dl = Math.round(random(1, 3));
+      rock = createSprite(1540, 0, 20, 20);
+      rock.addImage("roc", rockI);
+      rock.depth = truck.depth-1;
+      rock.scale = 1.25;
+  
+      if (diffuculty === "normal") {
+        rock.velocityX = (-20 - (3*score / 5));
+      } else if (diffuculty === "easy") {
+        rock.velocityX = (-8 - (3*score / 8));
+      } else if (diffuculty === "hard") {
+        rock.velocityX = (-25 - (3*score / 3));
+      }
+  
+      rock.lifetime = 100;
+      
+  
+      rockGroup.add(rock);
+      if (dl === 1) {
+        rock.y = 80;
+      } else if (dl === 2) {
+        rock.y = 360;
+      } else if (dl === 3) {
+        rock.y = 650;
+      } 
+    }
+  }
+
+  function pause(){
+    boxGroup.destroyEach();
+    coinGroup.destroyEach();
+    trafficGroup.destroyEach();
+    logGroup.destroyEach();
+    rockGroup.destroyEach();
   }
