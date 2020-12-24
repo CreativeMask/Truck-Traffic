@@ -48,6 +48,8 @@ var coinT = 0;
 var rockT = 0;
 var learnBI1, learnBI2, learnBI3;
 var learnB, learnB2, learnB3;
+var cheat = 0;
+var cheatType = 1;
 
 
 function preload() {
@@ -249,6 +251,8 @@ function draw() {
     if (mousePressedOver(next)) {
       gameState = PLAY;
       timer = 0;
+      cheat = 0;
+      cheatType = 1;
     }
   }
 
@@ -490,7 +494,12 @@ function draw() {
 
    // truck touching obstacles/collectibles 
     if(truck.isTouching(logGroup)){
-      life = life+-1;
+      if(cheatType === 1){
+        life = life+-1;
+      }
+      if(cheatType === 2){ 
+        life = life+0;
+      }
       logGroup.destroyEach();
       logGroup.debug = false;
     }
@@ -502,9 +511,15 @@ function draw() {
     }
 
     if(truck.isTouching(rockGroup)){
-      life = life-1;
+      if(cheatType === 1){
+        life = life+-1;
+        score = score-2;
+      }
+      if(cheatType === 2){
+        life = life+0;
+        score = score;
+      }
       rockGroup.destroyEach();
-      score = score-2;
     }
 
     if(truck.isTouching(coinGroup)){
@@ -513,16 +528,39 @@ function draw() {
     }
 
     if (truck.isTouching(trafficGroup)) {
-      life = life+-1;
+      if(cheatType === 2){
+        life = life+0;
+      } else {
+        life = life+-1;
+      }
       trafficGroup.destroyEach();
       aKey.visible = false;
       dKey.visible = false;
     }
 
-    if(keyDown("t") && add === 0){
-      score = score+1;
+
+    if(keyDown("c") && cheat === 0){
+      cheat = 1;
     }
 
+    //the cheats!!!!
+    //bulldozer = 2
+    // noCheat = 1
+    // scoreAdd = 3
+
+    if(cheat === 1){
+      if(keyDown("b")){
+        cheatType = 2;
+      } else if(keyDown("a")){
+        cheatType = 3;
+      }
+    }
+
+    if(cheatType === 3){
+      if(keyDown("up_arrow")){
+        score = score+1;
+      }
+    }
    
   }
   
@@ -553,6 +591,27 @@ function draw() {
   if(gameState === PLAY){
     text("Score" + ":" + score, 768, 30);
   }
+  
+  if(gameState === PLAY){
+    if(cheatType === 2){
+      fill("white");
+      textSize(25);
+      text("bulldozer", 40,45);
+    }
+
+    if(cheat === 1){
+      fill("white");
+      textSize(25);
+      text("cheats active:", 40,20);
+    }
+
+    if(cheatType === 3){
+      fill("white");
+      textSize(25);
+      text("scoreAdd", 40,45);
+    }
+  }
+  
   
 
 }
