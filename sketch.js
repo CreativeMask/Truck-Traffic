@@ -34,6 +34,7 @@ var hardB, hardBI;
 var mainMenu, mainMenuI;
 var timer = 0;
 var timer2 = 0;
+var timer3 = 0;
 var heart1, heartI;
 var heart2;
 var heart3;
@@ -253,6 +254,9 @@ function draw() {
       timer = 0;
       cheat = 0;
       cheatType = 1;
+      logT = 0;
+      coinT = 0;
+      rockT = 0;
     }
   }
 
@@ -497,7 +501,7 @@ function draw() {
       if(cheatType === 1){
         life = life+-1;
       }
-      if(cheatType === 2){ 
+      if(cheatType === 2 || cheatType === 100){ 
         life = life+0;
       }
       logGroup.destroyEach();
@@ -515,7 +519,7 @@ function draw() {
         life = life+-1;
         score = score-2;
       }
-      if(cheatType === 2){
+      if(cheatType === 2 || cheatType === 100){
         life = life+0;
         score = score;
       }
@@ -528,7 +532,7 @@ function draw() {
     }
 
     if (truck.isTouching(trafficGroup)) {
-      if(cheatType === 2){
+      if(cheatType === 2 || cheatType === 100){
         life = life+0;
       } else {
         life = life+-1;
@@ -539,27 +543,51 @@ function draw() {
     }
 
 
-    if(keyDown("c") && cheat === 0){
-      cheat = 1;
-    }
-
     //the cheats!!!!
     //bulldozer = 2
     // noCheat = 1
     // scoreAdd = 3
+    // instantDeath = 0
+    // godMode = 100
+    // if cheat = 1 then that means cheat are active, 
+    // while if it equals zero cheats are off
+
+    if(keyDown("c") && cheat === 0 && timer > 2.5){
+      cheat = 1;
+      timer = 0;
+    
+  } else if(keyDown("c") && cheat === 1 && timer > 2.5){
+      cheat = 0;
+      timer = 0;
+      cheatType = "noCheat";
+  }
+    timer = timer+0.25;
+
 
     if(cheat === 1){
       if(keyDown("b")){
         cheatType = 2;
       } else if(keyDown("a")){
         cheatType = 3;
+      } else if(keyDown("y")){
+        cheatType = 0;
+      } else if(keyDown("g")){
+        cheatType = 100;
       }
     }
 
-    if(cheatType === 3){
-      if(keyDown("up_arrow")){
+    if(cheatType === 3 || cheatType === 100){
+      timer3 = timer3+0.25;
+      if(keyDown("up_arrow") && timer3 > 1){
         score = score+1;
+        timer3 = 0;
       }
+    }
+
+    if(cheatType === 0){
+      score = score+100;
+      gameState = END;
+      life = 0;
     }
    
   }
@@ -571,10 +599,13 @@ function draw() {
     fill("black");
     textSize(50);
     text("Game Over", 60, 200);
-    truck.velocityX = (-12 -(3*score/2));
+    truck.velocityX = (12 -(3*score/2));
     road.velocityX = (-12 -(3*score/2));
     restart.visible = true;
     restart.depth = -5;
+    heart1.visible = false;
+    heart2.visible = false;
+    heart3.visible = false;
     if (mousePressedOver(restart)) {
       gameState = TITLE;
       score = 0;
@@ -609,6 +640,12 @@ function draw() {
       fill("white");
       textSize(25);
       text("scoreAdd", 40,45);
+    }
+
+    if(cheatType === 100){
+      fill("white");
+      textSize(25);
+      text("godMode", 40,45);
     }
   }
   
