@@ -1,6 +1,7 @@
 // I after a variable name means it is a image variable
 // T after a variable name means it is a tutorial variable
 // B after a variable name means it is a background variable
+// S after a variable name means it is a background variable
 
 var TUTORIAL = 0.5;
 var PAUSE = 0.2;
@@ -51,6 +52,10 @@ var learnBI1, learnBI2, learnBI3;
 var learnB, learnB2, learnB3;
 var cheat = 0;
 var cheatType = 1;
+var logH, logHGroup;
+var hurtS;
+var pointUpS;
+var musicS;
 
 
 function preload() {
@@ -78,6 +83,9 @@ function preload() {
   learnBI1 = loadImage("coinT.png");
   learnBI2 = loadImage("logT.png");
   learnBI3 = loadImage("rockT.png");
+  hurtS = loadSound("hurt.wav");
+  pointUpS = loadSound("pointUp.wav");
+  musicS = loadSound("music.wav");
 }
 
 function setup() {
@@ -168,7 +176,9 @@ function setup() {
   coinGroup = createGroup();
   logGroup = createGroup();
   rockGroup = createGroup();
-
+  logHGroup = createGroup();
+  obstacleGroup = createGroup();
+  collectibleGroup = createGroup();
 
 
 }
@@ -257,6 +267,7 @@ function draw() {
       logT = 0;
       coinT = 0;
       rockT = 0;
+      musicS.loop();
     }
   }
 
@@ -457,6 +468,16 @@ function draw() {
     }
 
 
+    // sound effects & music
+
+    if(truck.isTouching(collectibleGroup)){
+      pointUpS.play();
+    }
+
+    if(truck.isTouching(obstacleGroup)){
+      hurtS.play();
+    }
+
     
     // to prevent collision between different collectibles/obstaacles
     if (boxGroup.isTouching(trafficGroup)) {
@@ -495,6 +516,15 @@ function draw() {
     if(rockGroup.isTouching(trafficGroup)){
       rockGroup.destroyEach();
     }
+
+    if(logHGroup.isTouching(trafficGroup)){
+      trafficGroup.destroyEach();
+    }
+
+    if(logHGroup.isTouching(rockGroup)){
+      rockGroup.destroyEach();
+    }
+
 
    // truck touching obstacles/collectibles 
     if(truck.isTouching(logGroup)){
@@ -549,6 +579,7 @@ function draw() {
     // scoreAdd = 3
     // instantDeath = 0
     // godMode = 100
+    // debug = 4
     // if cheat = 1 then that means cheat are active, 
     // while if it equals zero cheats are off
 
@@ -573,6 +604,8 @@ function draw() {
         cheatType = 0;
       } else if(keyDown("g")){
         cheatType = 100;
+      } else if(keyDown("o")){
+        cheatType = 4;
       }
     }
 
@@ -647,6 +680,12 @@ function draw() {
       textSize(25);
       text("godMode", 40,45);
     }
+
+    if(cheatType === 4){
+      fill("white");
+      textSize(25);
+      text("debug", 40,45);
+    }
   }
   
   
@@ -675,10 +714,17 @@ function spawnTraffic() {
       traffic.velocityX = (-25 - (3*score / 3));
     }
 
+    if(cheatType === 4 || cheatType === 100){
+      traffic.debug = true;
+    } else {
+      traffic.debug = false;
+    }
 
+    
 
     traffic.lifetime = 600;
     trafficGroup.add(traffic);
+    obstacleGroup.add(traffic);
 
   }
 }
@@ -688,8 +734,10 @@ function spawnBoxes() {
     var fl = Math.round(random(1, 3));
     boxp = createSprite(1540, 0, 20, 20);
     boxp.addImage("box", boxI);
+    boxp.setCollider("rectangle", 0,0,80,100);
+    boxp.debug = true;
 
-    if (diffuculty === "normal") {
+    if(diffuculty === "normal") {
       boxp.velocityX = (-20 - (3*score / 5));
     } else if (diffuculty === "easy") {
       boxp.velocityX = (-8 - (3*score / 8));
@@ -699,9 +747,14 @@ function spawnBoxes() {
 
     boxp.lifetime = 600;
     
-    
+    if(cheatType === 4 || cheatType === 100){
+      boxp.debug = true;
+    } else {
+      boxp.debug = false;
+    }
 
     boxGroup.add(boxp);
+    collectibleGroup.add(boxp);
     if (fl === 1) {
       boxp.y = 80;
     } else if (fl === 2) {
@@ -718,8 +771,9 @@ function spawnCoin() {
       coin = createSprite(1540, 0, 20, 20);
       coin.addImage("coi", coinI);
       coin.scale = 0.25;
-      coin.setCollider("rectangle", 0, 0, 200, 200);
+      coin.setCollider("rectangle", 0, 0, 320, 200);
       coin.depth = truck.depth-1;
+      coin.debug = true;
   
       if (diffuculty === "normal") {
         coin.velocityX = (-20 - (3*score / 5));
@@ -731,8 +785,14 @@ function spawnCoin() {
   
       coin.lifetime = 100;
       
-  
+      if(cheatType === 4 || cheatType === 100){
+        coin.debug = true;
+      } else {
+        coin.debug = false;
+      }
+
       coinGroup.add(coin);
+      collectibleGroup.add(coin);
       if (vl === 1) {
         coin.y = 80;
       } else if (vl === 2) {
@@ -744,39 +804,59 @@ function spawnCoin() {
   }
 
   function spawnLog(){
-    if (frameCount % 110 === 0 && score > 10) {
+    if (frameCount % 180 === 0 && score > 10) {
       var rl = Math.round(random(1, 4));
       log = createSprite(1540, 0, 20, 20);
       log.addImage("log", logI);
       log.setCollider("rectangle", 0, 0, 50, 400);
       log.depth = truck.depth-1;
+      logH = createSprite(1540, 0, 10, 10);
+      logH.setCollider("rectangle", 0, 0, 50, 1000);
+      logH.visible = false;
+      logH.depth = log.depth-1;
+  
   
       if (diffuculty === "normal") {
         log.velocityX = (-20 - (3*score / 5));
+        logH.velocityX = (-20 - (3*score / 5));
       } else if (diffuculty === "easy") {
         log.velocityX = (-8 - (3*score / 8));
+        logH.velocityX = (-8 - (3*score / 8));
       } else if (diffuculty === "hard") {
         log.velocityX = (-25 - (3*score / 3));
+        logH.velocityX = (-25 - (3*score / 3));
       }
   
       log.lifetime = 100;
       
+      if(cheatType === 4 || cheatType === 100){
+        log.debug = true;
+      } else {
+        log.debug = false;
+      }
   
       logGroup.add(log);
+      obstacleGroup.add(log);
       if (rl === 1) {
         log.y = 200;
+        logH.y = 200;
       } else if (rl === 2) {
         log.y = 560;
+        logH.y = 560;
       } else if (rl === 3) {
         log.y = 200;
+        logH.y = 200;
       } else if (rl === 4) {
         log.y = 560;
+        logH.y = 560;
       }
+      logH.lifetime = 100;
+      logHGroup.add(logH);
     }
   }
 
   function spawnRock(){
-    if (frameCount % 150 === 0 && score > 16) {
+    if (frameCount % 240 === 0 && score > 16) {
       var dl = Math.round(random(1, 3));
       rock = createSprite(1540, 0, 20, 20);
       rock.addImage("roc", rockI);
@@ -793,8 +873,14 @@ function spawnCoin() {
   
       rock.lifetime = 100;
       
-  
+      if(cheatType === 4 || cheatType === 100){
+        rock.debug = true;
+      } else {
+        rock.debug = false;
+      }
+
       rockGroup.add(rock);
+      obstacleGroup.add(rock);
       if (dl === 1) {
         rock.y = 80;
       } else if (dl === 2) {
