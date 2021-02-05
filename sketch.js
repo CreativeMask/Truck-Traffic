@@ -56,9 +56,11 @@ var logH, logHGroup;
 var hurtS;
 var pointUpS;
 var musicS;
-var lane1 = 105;
-var lane2 = 475;
-var lane3 = 857;
+var lane1 = 76;
+var lane2 = 360;
+var lane3 = 654;
+var screenWidthH = 1536/2;
+var screenHeightH = 720/2;
 
 
 function preload() {
@@ -92,62 +94,62 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1536, 950);
+  createCanvas(1536, 720);
 
-  road = createSprite(768, 475, 400, 400);
+  road = createSprite(screenWidthH, screenHeightH, 400, 400);
   road.addImage("roa", roadI);
   
 
-  title = createSprite(768, 475, 400, 400);
+  title = createSprite(screenWidthH, screenHeightH, 400, 400);
   title.addImage("titl", titleI);
 
-  aKey = createSprite(94, 319, 200, 200);
+  aKey = createSprite(94, 240, 200, 200);
   aKey.addImage("ake", aKeyI);
 
-  dKey = createSprite(298, 319, 200, 200);
+  dKey = createSprite(298, 240, 200, 200);
   dKey.addImage("dke", dKeyI);
 
-  easyB = createSprite(768, 475, 400, 400);
+  easyB = createSprite(screenWidthH, screenHeightH, 400, 400);
   easyB.addImage("eas", easyBI);
   easyB.scale = 0.75;
 
-  hardB = createSprite(768, 790, 400, 400);
+  hardB = createSprite(screenWidthH, 600, 400, 400);
   hardB.addImage("har", hardBI);
   hardB.scale = 0.75;
 
-  mainMenu = createSprite(100,818, 200, 200);
+  mainMenu = createSprite(100,654, 200, 200);
   mainMenu.addImage("mai", mainMenuI);
   mainMenu.debug = true;
   mainMenu.scale = 1.3;
   mainMenu.setCollider("rectangle", 0, 10, 190, 90);
 
-  pauseScreen = createSprite(768, 475, 400, 400);
+  pauseScreen = createSprite(screenWidthH, screenHeightH, 400, 400);
   pauseScreen.addImage("pause", pauseScreenI);
 
-  start = createSprite(768, 633, 400, 400);
+  start = createSprite(screenWidthH, 480, 400, 400);
   start.addImage("sta", startI);
   start.scale = 0.75
 
-  pause = createSprite(1284, 30, 400, 400);
+  pause = createSprite(1284, 23, 400, 400);
   pause.addImage("pau", pauseI);
 
-  truck = createSprite(196, 360, 400, 400);
+  truck = createSprite(196, lane2, 400, 400);
   truck.addImage("tru", truckI);
   truck.scale = 0.75;
   truck.setCollider("rectangle", 0, 0, 450,150);
   truck.debug = false;
 
-  next = createSprite(768, 700, 20, 20);
+  next = createSprite(screenWidthH, 554, 20, 20);
   next.addImage("nex", nextI);
 
-  tutorial = createSprite(768, 475, 400, 400);
+  tutorial = createSprite(screenWidthH, screenHeightH, 400, 400);
   tutorial.addImage("tut", tutorialI);
 
-  restart = createSprite(768, 400, 20, 20);
+  restart = createSprite(screenWidthH, 303, 20, 20);
   restart.addImage("res", restartI);
   restart.scale = 4;
 
-  gameover = createSprite(768, 475, 400, 400);
+  gameover = createSprite(screenWidthH, screenHeightH, 400, 400);
   gameover.addImage("gam", gameoverI);
   gameover.depth = -6;
   
@@ -163,13 +165,13 @@ function setup() {
   heart3.addImage("hear", heartI);
   heart3.scale = 0.75;
 
-  learnB = createSprite(768, 475,400,400);
+  learnB = createSprite(screenWidthH, screenHeightH,400,400);
   learnB.addImage("coinT", learnBI1);
 
-  learnB2 = createSprite(768, 475,400,400);
+  learnB2 = createSprite(screenWidthH, screenHeightH,400,400);
   learnB2.addImage("logT", learnBI2);
 
-  learnB3 = createSprite(768, 475,400,400);
+  learnB3 = createSprite(screenWidthH, screenHeightH,400,400);
   learnB3.addImage("rockT", learnBI3);
 
 
