@@ -56,6 +56,9 @@ var logH, logHGroup;
 var hurtS;
 var pointUpS;
 var musicS;
+var lane1 = 105;
+var lane2 = 475;
+var lane3 = 857;
 
 
 function preload() {
@@ -89,13 +92,13 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(1536, 720);
+  createCanvas(1536, 950);
 
-  road = createSprite(768, 360, 400, 400);
+  road = createSprite(768, 475, 400, 400);
   road.addImage("roa", roadI);
   
 
-  title = createSprite(768, 360, 400, 400);
+  title = createSprite(768, 475, 400, 400);
   title.addImage("titl", titleI);
 
   aKey = createSprite(94, 319, 200, 200);
@@ -104,24 +107,24 @@ function setup() {
   dKey = createSprite(298, 319, 200, 200);
   dKey.addImage("dke", dKeyI);
 
-  easyB = createSprite(768, 360, 400, 400);
+  easyB = createSprite(768, 475, 400, 400);
   easyB.addImage("eas", easyBI);
   easyB.scale = 0.75;
 
-  hardB = createSprite(768, 600, 400, 400);
+  hardB = createSprite(768, 790, 400, 400);
   hardB.addImage("har", hardBI);
   hardB.scale = 0.75;
 
-  mainMenu = createSprite(100,620, 200, 200);
+  mainMenu = createSprite(100,818, 200, 200);
   mainMenu.addImage("mai", mainMenuI);
   mainMenu.debug = true;
   mainMenu.scale = 1.3;
   mainMenu.setCollider("rectangle", 0, 10, 190, 90);
 
-  pauseScreen = createSprite(768, 360, 400, 400);
+  pauseScreen = createSprite(768, 475, 400, 400);
   pauseScreen.addImage("pause", pauseScreenI);
 
-  start = createSprite(768, 480, 400, 400);
+  start = createSprite(768, 633, 400, 400);
   start.addImage("sta", startI);
   start.scale = 0.75
 
@@ -134,17 +137,17 @@ function setup() {
   truck.setCollider("rectangle", 0, 0, 450,150);
   truck.debug = false;
 
-  next = createSprite(768, 530, 20, 20);
+  next = createSprite(768, 700, 20, 20);
   next.addImage("nex", nextI);
 
-  tutorial = createSprite(768, 360, 400, 400);
+  tutorial = createSprite(768, 475, 400, 400);
   tutorial.addImage("tut", tutorialI);
 
   restart = createSprite(768, 400, 20, 20);
   restart.addImage("res", restartI);
   restart.scale = 4;
 
-  gameover = createSprite(768, 360, 400, 400);
+  gameover = createSprite(768, 475, 400, 400);
   gameover.addImage("gam", gameoverI);
   gameover.depth = -6;
   
@@ -160,13 +163,13 @@ function setup() {
   heart3.addImage("hear", heartI);
   heart3.scale = 0.75;
 
-  learnB = createSprite(768, 360,400,400);
+  learnB = createSprite(768, 475,400,400);
   learnB.addImage("coinT", learnBI1);
 
-  learnB2 = createSprite(768, 360,400,400);
+  learnB2 = createSprite(768, 475,400,400);
   learnB2.addImage("logT", learnBI2);
 
-  learnB3 = createSprite(768, 360,400,400);
+  learnB3 = createSprite(768, 475,400,400);
   learnB3.addImage("rockT", learnBI3);
 
 
@@ -184,7 +187,7 @@ function setup() {
 }
 
 function draw() {
-  background("white");
+  background("gray");
   console.log(World.mouseY + "  mouseY");
   console.log(World.mouseX + "  mouseX");
   console.log("gameState:" + gameState);
@@ -456,15 +459,15 @@ function draw() {
     }
 
     if (lane === 1) {
-      truck.y = 80;
+      truck.y = lane1;
     }
 
     if (lane === 2) {
-      truck.y = 360;
+      truck.y = lane2;
     }
 
     if (lane === 3) {
-      truck.y = 650;
+      truck.y = lane3;
     }
 
 
@@ -699,11 +702,11 @@ function spawnTraffic() {
     traffic.addImage("tra", trafficI);
     traffic.scale = 1;
     if (ro === 1) {
-      traffic.y = 80;
+      traffic.y = lane1;
     } else if (ro === 2) {
-      traffic.y = 360;
+      traffic.y = lane2;
     } else if (ro === 3) {
-      traffic.y = 650;
+      traffic.y = lane3;
     }
 
     if (diffuculty === "normal") {
@@ -756,11 +759,11 @@ function spawnBoxes() {
     boxGroup.add(boxp);
     collectibleGroup.add(boxp);
     if (fl === 1) {
-      boxp.y = 80;
+      boxp.y = lane1;
     } else if (fl === 2) {
-      boxp.y = 360;
+      boxp.y = lane2;
     } else if (fl === 3) {
-      boxp.y = 650;
+      boxp.y = lane3;
     }
   }
 }
@@ -794,11 +797,11 @@ function spawnCoin() {
       coinGroup.add(coin);
       collectibleGroup.add(coin);
       if (vl === 1) {
-        coin.y = 80;
+        coin.y = lane1;
       } else if (vl === 2) {
-        coin.y = 360;
+        coin.y = lane2;
       } else if (vl === 3) {
-        coin.y = 650;
+        coin.y = lane3;
       }
     }
   }
@@ -808,12 +811,14 @@ function spawnCoin() {
       var rl = Math.round(random(1, 4));
       log = createSprite(1540, 0, 20, 20);
       log.addImage("log", logI);
-      log.setCollider("rectangle", 0, 0, 50, 400);
+      log.setCollider("rectangle", 0, 0, 50, 450);
       log.depth = truck.depth-1;
+      log.scale = 1.5;
       logH = createSprite(1540, 0, 10, 10);
-      logH.setCollider("rectangle", 0, 0, 50, 1000);
+      logH.setCollider("rectangle", 0, 0, 50, 1500);
       logH.visible = false;
       logH.depth = log.depth-1;
+      logH.scale = 1.5;
   
   
       if (diffuculty === "normal") {
@@ -838,17 +843,17 @@ function spawnCoin() {
       logGroup.add(log);
       obstacleGroup.add(log);
       if (rl === 1) {
-        log.y = 200;
-        logH.y = 200;
+        log.y = 270;
+        logH.y = 270;
       } else if (rl === 2) {
-        log.y = 560;
-        logH.y = 560;
+        log.y = 725;
+        logH.y = 725;
       } else if (rl === 3) {
-        log.y = 200;
-        logH.y = 200;
+        log.y = 270;
+        logH.y = 270;
       } else if (rl === 4) {
-        log.y = 560;
-        logH.y = 560;
+        log.y = 725;
+        logH.y = 725;
       }
       logH.lifetime = 100;
       logHGroup.add(logH);
@@ -882,11 +887,11 @@ function spawnCoin() {
       rockGroup.add(rock);
       obstacleGroup.add(rock);
       if (dl === 1) {
-        rock.y = 80;
+        rock.y = lane1;
       } else if (dl === 2) {
-        rock.y = 360;
+        rock.y = lane2;
       } else if (dl === 3) {
-        rock.y = 650;
+        rock.y = lane3;
       } 
     }
   }
